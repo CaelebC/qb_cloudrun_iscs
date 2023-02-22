@@ -1,0 +1,16 @@
+{% extends 'base.html' %}		
+
+{% block styles %}
+	.main{
+		display: block;
+	}
+    
+    div{
+        display: block;
+        padding: 20px;
+    }
+{% endblock %}
+
+{% block content %}
+    {{ questform.as_p }}
+{% endblock %} 

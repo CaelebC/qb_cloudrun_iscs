@@ -1,0 +1,204 @@
+{% extends 'base.html' %}		
+{% load static %}
+
+{% block title %}
+    {{ questboard.name }} Questboard
+{% endblock %}
+
+{% block styles %}
+    .hidden{
+        display: none;
+    }
+    .quests{
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;=
+    }
+    .quest{
+        width: 350px;
+        padding: 30px 15px;
+        margin: 30px 10px 30px 10px;
+    }
+    .quest > *{
+        padding: 20px 15px 10px 15px;
+    }
+    .header{
+        background-color: #CC3EFF;
+        color: white;
+    }
+    .body{
+        background-color: #F5D9FF;
+    }
+    .footer{
+        background-color: #CC3EFF;
+        padding-top: 7px;
+        padding-bottom: 2px;
+        color: yellow;
+    }
+    .checked{
+        color: yellow;
+    }
+    .dibs{
+        text-align: left;
+        padding-left: 30px;
+        padding-top: 0px;
+    }
+    .edit_quest{
+        text-align: center;
+        padding-right: 10px;
+    }
+{% endblock %}
+
+{% block content %}
+    <h1>{{ questboard.name }} Questboard</h1>
+    <h4>Each group should collect {{ questboard.required_stars }} stars to fulfill the requirements for {{ questboard.name }}.</h4>
+    <h4>{{ questboard.description }}</h4>
+    
+    <a class="btn btn-primary" id="home" href="{% url 'home' %}">Home</a>
+    <a class="btn btn-primary" id="edit_questboard" href="{% url 'edit_questboard' questboard.id %}">
+        Edit Questboard
+    </a>
+    <a class="btn btn-primary" id="add_quest" href="{% url 'add_quest' questboard.id %}">
+        Add Quest
+    </a>
+    
+    <div class="quests">
+        {% if questboard.quests %}
+            {% for quest in questboard.quests.all|dictsort:"id" %}
+                <div class="quest">
+                    <div class="header"><h3>{{ quest.name }}</h3></div>
+                    <div class="body description">
+                        <p>{{ quest.description }}</p>
+                    </div>
+                    
+                    <div class="body dibs">
+                        {% if quest.is_for_everyone %}
+                            <p style="text-align: center">All students will participate in this quest.</p>
+                        {% else %}
+                            <form method="post" onsubmit="return confirm('Do you really want to dibs on this activity?');">
+                                {% csrf_token %}
+                                    {% if quest.student_1 %}
+                                        <p>Student 1: {{ quest.student_1 }}</p>
+                                    {% else %}
+                                        <p>Student 1: {{ questform.student_1 }}</p>
+                                    {% endif %}
+
+                                    {% if quest.student_2 %}
+                                        <p>Student 2: {{ quest.student_2 }}</p>
+                                    {% else %}
+                                        <p>Student 2: {{ questform.student_2 }}</p>
+                                    {% endif %}
+
+                                    {% if quest.student_3 %}
+                                        <p>Student 3: {{ quest.student_3 }}</p>
+                                    {% else %}
+                                        <p>Student 3: {{ questform.student_3 }}</p>
+                                    {% endif %}
+                                <button type="submit" class="hidden" name="dibs_quest" value={{ quest.id }}></button>
+                            </form>
+                        {% endif %}
+                         
+                        <div class="edit_quest">
+                            {% if not quest.student_1 and not quest.student_2 and not quest.student_3 or quest.is_for_everyone %}
+                                <a class="btn btn-primary" id="edit_quest" href="{% url 'edit_quest' quest.id %}">
+                                    Edit Quest
+                                </a>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <div class="footer">
+                        <h5>{{ quest.star_count }} <span class="fa fa-star checked"></span></h5>
+                    </div>
+                </div>
+                
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="modal fade" id="edit_quest_modal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                      <div class="modal-dialog">
+                        <div class="modal-content">
+                          <div class="modal-header">
+                            <h5 class="modal-title" id="exampleModalLabel">
+                                Edit Quest
+                            </h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                            </button>
+                          </div>
+                          <div class="modal-body">
+                            
+                          </div>
+                          <div class="modal-footer">
+                            <button type="submit" class="btn btn-primary" name="update_quest">
+                                Update
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                </form>
+            {% endfor %}
+        {% endif %}
+    </div>
+    
+    <form method="post">
+        {% csrf_token %}
+        <div class="modal fade" id="edit_questboard_modal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">
+                    Edit Questboard
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                </button>
+              </div>
+              <div class="modal-body">
+                
+              </div>
+              <div class="modal-footer">
+                <button type="submit" class="btn btn-primary" name="update_questboard">
+                    Update
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+    </form>
+    
+    <form method="post">
+        {% csrf_token %}
+        <div class="modal fade" id="add_quest_modal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Add Quest</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="modal-body">
+              
+              </div>
+              <div class="modal-footer">
+                <button type="submit" class="btn btn-primary" name="add_quest">Add</button>
+              </div>
+            </div>
+          </div>
+        </div>
+    </form>
+{% endblock %}
+
+{% block scripts %}
+    $(document).on('click', '#edit_questboard', function(e){
+        e.preventDefault();
+        $('#edit_questboard_modal').modal('show').find('.modal-body').load($(this).attr('href'));
+    });
+    
+    $(document).on('click', '#add_quest', function(e){
+        e.preventDefault();
+        $('#add_quest_modal').modal('show').find('.modal-body').load($(this).attr('href'));
+    });
+    
+    $(document).on('click', '#edit_quest', function(e){
+        e.preventDefault();
+        $('#edit_quest_modal').modal('show').find('.modal-body').load($(this).attr('href'));
+    });
+{% endblock %}
