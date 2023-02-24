@@ -31,7 +31,8 @@ SECRET_KEY = os.getenv('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+CSRF_TRUSTED_ORIGINS = ['http://localhost:8000', 'http://127.0.0.1:8080', 'http://0.0.0.0:8080', 'https://questboardsite-k65duqudtq-uc.a.run.app']
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', '0.0.0.0', 'questboardsite-k65duqudtq-uc.a.run.app']
 
 
 # Application definition
