@@ -31,8 +31,12 @@ SECRET_KEY = os.getenv('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-CSRF_TRUSTED_ORIGINS = ['http://localhost:8000', 'http://127.0.0.1:8080', 'http://0.0.0.0:8080', 'https://questboardsite-k65duqudtq-uc.a.run.app']
-ALLOWED_HOSTS = ['localhost', '127.0.0.1', '0.0.0.0', 'questboardsite-k65duqudtq-uc.a.run.app']
+# CSRF_TRUSTED_ORIGINS = ['http://localhost:8000', 'http://127.0.0.1:8080', 'http://0.0.0.0:8080', 'https://questboardsite-k65duqudtq-uc.a.run.app']
+
+# ALLOWED_HOSTS = ['localhost', '127.0.0.1', '0.0.0.0', 'questboardsite-k65duqudtq-uc.a.run.app']
+# ALLOWED_HOSTS = [os.environ.get('HOST_IP'), '127.0.0.1']
+# ALLOWED_HOSTS = [os.environ.get('LOAD_BALANCER_IP', '127.0.0.1')]
+ALLOWED_HOSTS = ['*']  # Do not do this because it is bad security. But can be used for testing only.
 
 
 # Application definition
@@ -51,7 +55,7 @@ MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
+    # 'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
